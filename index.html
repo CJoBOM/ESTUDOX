@@ -120,7 +120,39 @@ function addTask() {
 
   render();
 }
-;if(!title)return;let subject=prompt('Matéria:','Matemática')||'Outra';state.tasks.push({id:Date.now(),title,subject,day:'Sexta',priority:'Média',minutes:40,status:'Pendente',questions:0,correct:0,date:'',nextReview:'',notes:''});render()}function editTask(id){let t=state.tasks.find(x=>x.id===id);let q=prompt('Quantas questões fez?',t.questions||0);if(q===null)return;let c=prompt('Quantos acertos?',t.correct||0);if(c===null)return;t.questions=Math.max(0,+q||0);t.correct=Math.min(t.questions,Math.max(0,+c||0));let n=prompt('Anotações / dúvidas:',t.notes||'');if(n!==null)t.notes=n;state.scores.push({date:new Date().toISOString().slice(0,10),subject:t.subject,content:t.title,questions:t.questions,correct:t.correct,action:t.notes?'Rever: '+t.notes:'Refazer questões erradas'});render()}function addReview(){let content=prompt('Qual conteúdo vai revisar?');if(!content)return;let subject=prompt('Matéria:','Matemática')||'Outra';let interval=prompt('Intervalo (1 dia, 7 dias ou 30 dias):','7 dias')||'7 dias';let date=prompt('Data da revisão (AAAA-MM-DD):','');state.reviews.push({content,subject,interval,date:date||'',done:false});render()}function toggleReview(i){state.reviews[i].done=!state.reviews[i].done;render()}function removeReview(i){if(confirm('Excluir esta revisão?')){state.reviews.splice(i,1);render()}}function addScore(){let subject=prompt('Matéria:');if(!subject)return;let content=prompt('Conteúdo estudado:')||'Treino geral';let questions=Math.max(0,+prompt('Número de questões:','10')||0);let correct=Math.min(questions,Math.max(0,+prompt('Número de acertos:','0')||0));let action=prompt('O que revisar depois?','Refazer questões erradas')||'';state.scores.push({date:new Date().toISOString().slice(0,10),subject,content,questions,correct,action});render()}function saveNotes(){let el=document.getElementById('notes');if(el)state.notes=el.value;save();alert('Anotações salvas neste protótipo.')}render();
+function editTask(id){let t=state.tasks.find(x=>x.id===id);let q=prompt('Quantas questões fez?',t.questions||0);if(q===null)return;let c=prompt('Quantos acertos?',t.correct||0);if(c===null)return;t.questions=Math.max(0,+q||0);t.correct=Math.min(t.questions,Math.max(0,+c||0));let n=prompt('Anotações / dúvidas:',t.notes||'');if(n!==null)t.notes=n;state.scores.push({date:new Date().toISOString().slice(0,10),subject:t.subject,content:t.title,questions:t.questions,correct:t.correct,action:t.notes?'Rever: '+t.notes:'Refazer questões erradas'});render()}function editTaskDetails(id){
+  const t=state.tasks.find(x=>x.id===id);
+  if(!t)return;
+  const title=prompt('Nome da tarefa:',t.title);
+  if(title===null)return;
+  if(!title.trim()){alert('O nome não pode ficar vazio.');return;}
+  const subject=prompt('Matéria:',t.subject);
+  if(subject===null)return;
+  if(!subject.trim()){alert('A matéria não pode ficar vazia.');return;}
+  const day=prompt('Dia planejado:',t.day||'');
+  if(day===null)return;
+  const priority=prompt('Prioridade: Alta, Média ou Baixa',t.priority||'Média');
+  if(priority===null)return;
+  const minutesInput=prompt('Tempo estimado em minutos:',String(t.minutes||40));
+  if(minutesInput===null)return;
+  const minutes=Number(minutesInput);
+  if(!Number.isFinite(minutes)||minutes<=0){alert('Digite um tempo válido em minutos.');return;}
+  const deadline=prompt('Prazo (AAAA-MM-DD), deixe vazio para remover:',t.deadline||'');
+  if(deadline===null)return;
+  if(deadline&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(deadline)){alert('Use o formato AAAA-MM-DD.');return;}
+  if(deadline){
+    const d=new Date(deadline+'T00:00:00');
+    if(Number.isNaN(d.getTime())||d.toISOString().slice(0,10)!==deadline){alert('A data informada não existe.');return;}
+  }
+  t.title=title.trim();
+  t.subject=subject.trim();
+  t.day=day.trim();
+  t.priority=['Alta','Média','Baixa'].includes(priority)?priority:'Média';
+  t.minutes=minutes;
+  t.deadline=deadline;
+  render();
+}
+function addReview(){let content=prompt('Qual conteúdo vai revisar?');if(!content)return;let subject=prompt('Matéria:','Matemática')||'Outra';let interval=prompt('Intervalo (1 dia, 7 dias ou 30 dias):','7 dias')||'7 dias';let date=prompt('Data da revisão (AAAA-MM-DD):','');state.reviews.push({content,subject,interval,date:date||'',done:false});render()}function toggleReview(i){state.reviews[i].done=!state.reviews[i].done;render()}function removeReview(i){if(confirm('Excluir esta revisão?')){state.reviews.splice(i,1);render()}}function addScore(){let subject=prompt('Matéria:');if(!subject)return;let content=prompt('Conteúdo estudado:')||'Treino geral';let questions=Math.max(0,+prompt('Número de questões:','10')||0);let correct=Math.min(questions,Math.max(0,+prompt('Número de acertos:','0')||0));let action=prompt('O que revisar depois?','Refazer questões erradas')||'';state.scores.push({date:new Date().toISOString().slice(0,10),subject,content,questions,correct,action});render()}function saveNotes(){let el=document.getElementById('notes');if(el)state.notes=el.value;save();alert('Anotações salvas neste protótipo.')}render();
 
   
 function deleteTask(id) {
